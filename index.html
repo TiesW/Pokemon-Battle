@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+  <head>
+    <meta charset="UTF-8"> 
+    <title>Pokémon Battle</title>
+    <style>
+    body {
+       font-family: 'Helvetica Neue', sans-serif;
+       margin: 90px;
+       text-align: center;
+    }
+    #speler1, #speler2 {
+        font-size: 1.20rem;
+    }
+
+    #beginButton {
+        margin: 20px;
+        cursor: pointer;
+    }
+
+    #speler1box, #speler2box {
+      font-weight: bold;
+      color: rgb(73, 66, 55);
+    }
+
+    #hpSpeler1, #hpSpeler2 {
+      font-weight: bold;
+    }
+
+    .header2.hide, .header3.hide {
+    height: 0px;
+    overflow: hidden;
+    }
+
+    .battleContainer {
+    height: 0px;
+    overflow: hidden;
+    }
+    .battleContainer.show {
+    height: 600px;
+    width: 800px;
+    background-color: rgb(231, 231, 231);
+    margin: 0 auto;
+    position: relative;
+    }
+
+    #spelerEenPokemonTekst, #spelerTweePokemonTekst {
+      font-size: 1.3rem;
+      color: rgb(73, 66, 55);
+      line-height: 2;
+    }
+
+    #winnaartekst {
+      display: inline-block;
+      font-size: 1.5rem;
+      margin-bottom: 2em;
+    }
+
+    .play-again {
+    height: 0px;
+    overflow: hidden;
+    }
+    .play-again.show {
+    height: 40px;
+    }
+
+    .play-again-btn {
+    display: inline-block;
+    margin-bottom: 2em;
+    height: 40px;
+    line-height: 40px;
+    width: 60%;
+    background: rgb(64, 76, 131);
+    color: white;
+    text-decoration: none;
+    }
+
+    .aanval {
+    background-color: rgb(226, 226, 226);
+    cursor: pointer;
+    margin-top: 2em;
+    height: 30px;
+    }
+
+    .aanval:focus {
+    outline: 0;
+  }
+
+    .aanvalbuttons.fade, .aanvalbuttons2.fade {
+    height: 0px;
+    overflow: hidden;
+    }
+    
+    .pokeBoxEen {
+    float: left;
+    padding: 20px;
+    }
+    .pokeBoxTwee {
+    float: right;
+    padding: 20px;
+    }
+
+    </style>
+    <script>
+
+ 
+
+
+var playAgainBtnEl = document.querySelector('#play-again-btn');
+
+
+
+
+
+var spelerEenPokemon;     //Globaal gemaakt voor als ze nodig zijn.
+var spelerTweePokemon;
+
+var spelerEenBeurt = true;
+var spelerTweeBeurt = false;
+
+var totaal = 60;
+var totaal2 = 60;    //Of totaalCharmander, totaalSquirtle etc.
+
+function gameBegin() {
+
+            var geselecteerdePokemonEen = document.getElementById('spelerEenKeuze');
+            var spelerEenPokemon = geselecteerdePokemonEen.options[spelerEenKeuze.selectedIndex].value;
+            
+            var geselecteerdePokemonTwee = document.getElementById('spelerTweeKeuze');
+            var spelerTweePokemon = geselecteerdePokemonTwee.options[spelerTweeKeuze.selectedIndex].value;
+
+        if(spelerEenPokemon == "keuze" || spelerTweePokemon == "keuze")
+            {
+                return;
+            }
+            else
+            {
+
+        document.getElementById("battleContainer").classList.add('show');
+        document.getElementById("header2").classList.add('hide');
+        document.getElementById("header3").classList.add('hide');
+        document.getElementById("hpSpeler1").innerHTML = "HP: "+totaal;
+        document.getElementById("hpSpeler2").innerHTML = "HP: "+totaal2;
+
+        document.getElementById("spelerEenPokemonTekst").innerHTML = spelerEenPokemon;
+        document.getElementById("spelerTweePokemonTekst").innerHTML = spelerTweePokemon;
+    }
+}
+
+    //Dit is de parameter voor aanvallen die in de aanval-buttons worden aangeroepen met een argument
+    function aanvallen(schade){
+      if (spelerEenBeurt)
+      {
+        if (totaal2 <= 0) {  
+           document.getElementById("aanvalbuttons").classList.add('fade');
+           document.getElementById("aanvalbuttons2").classList.add('fade');
+           document.getElementById("winnaartekst").innerHTML = "De winnaar is: Speler 1";
+           document.getElementById("play-again").classList.add('show');
+           totaal2 = 0;
+           return;
+        }else{
+           totaal2 = totaal2 - schade;
+      }
+      document.getElementById("hpSpeler2").innerHTML = "HP: "+totaal2;
+      spelerEenBeurt = false;
+      spelerTweeBeurt = true;
+      } 
+    }
+
+     function aanvallen2(schade2){
+      if (spelerTweeBeurt)
+      {
+        if (totaal <= 0) {  
+           document.getElementById("aanvalbuttons").classList.add('fade');
+           document.getElementById("aanvalbuttons2").classList.add('fade');
+           document.getElementById("winnaartekst").innerHTML = "De winnaar is: Speler 2";
+           document.getElementById("play-again").classList.add('show');
+           totaal = 0;
+           return;
+        }else{
+           totaal = totaal - schade2;
+      }
+      document.getElementById("hpSpeler1").innerHTML = "HP: "+totaal;
+      spelerEenBeurt = true;
+      spelerTweeBeurt = false;
+      } 
+    }
+
+     function reloadpage(){
+       location.reload();
+     }
+
+
+
+    </script>
+  </head>
+  <body>
+    <h1 class="title">Pokémon Battle</h1>
+    <h2 id="header2" class="header2">
+            <span id="speler1" contenteditable="false">Speler 1</span>
+    <select id="spelerEenKeuze">
+            <option value="keuze"> -- kies een pokemon -- </option>
+            <option value="Charmander">Charmander</option>
+            <option value="Squirtle">Squirtle</option>
+            <option value="Bulbasaur">Bulbasaur</option>
+    </select>
+            <span id="speler2" contenteditable="false">Speler 2</span>
+    <select id="spelerTweeKeuze">
+            <option value="keuze"> -- kies een pokemon -- </option>
+            <option value="Bulbasaur">Bulbasaur</option>
+            <option value="Squirtle">Squirtle</option>
+            <option value="Charmander">Charmander</option>
+    </select>
+    </h2>
+    <h3 id="header3" class="header3">
+    <button id="beginButton" onclick="gameBegin()">Start Spel</button>
+    </h3>
+    <span id="winnaartekst"></span>
+
+
+
+    <div id="battleContainer" class="battleContainer">
+
+        <div class="pokeBoxEen">
+        <span id="speler1box">Speler 1</span>
+        <div id="spelerEenPokemonTekst"></div>
+        <div id="hpSpeler1"></div>
+        <div id="aanvalbuttons" class="aanvalbuttons">
+        <button class="aanval" onclick="aanvallen(20)">Tackle (20)</button> <!-- Dit is het argument voor de parameter 'schade' -->
+        <button class="aanval" onclick="aanvallen(30)">Ember (30)</button>
+        </div>
+        <br>
+        <img id="plaatje1" src="charmander1.png" width="220" height="200">
+        </div>
+        <div class="pokeBoxTwee">
+        <div id="speler2box">Speler 2</div>
+        <div id="spelerTweePokemonTekst"></div>
+        <div id="hpSpeler2"></div>
+        <div id="aanvalbuttons2" class="aanvalbuttons2">
+        <button class="aanval" onclick="aanvallen2(20)">Scratch (20)</button>
+        <button class="aanval" onclick="aanvallen2(30)">Vine Whip (30)</button>
+        </div>
+        <br>
+        <img id="plaatje2" src="bulbasaur2.png" width="220" height="200">
+        </div>
+        <br>
+
+        <div id="play-again" class="play-again">
+           <a href="#" class="play-again-btn" id="play-again-btn" onclick="reloadpage()">Nieuw Spel</a>
+        </div>
+
+    </div>
+
+
+
+
+  </body>
+</html>
