@@ -17,6 +17,8 @@
     #beginButton {
         margin: 20px;
         cursor: pointer;
+        height: 40px;
+        width: 130px;
     }
 
     #speler1box, #speler2box {
@@ -43,6 +45,7 @@
     background-color: rgb(231, 231, 231);
     margin: 0 auto;
     position: relative;
+    border: 1px solid rgb(172, 172, 172);
     }
 
     #spelerEenPokemonTekst, #spelerTweePokemonTekst {
@@ -102,6 +105,7 @@
     }
 
     </style>
+    <script src="classes.js"></script>
     <script>
 
  
@@ -113,14 +117,19 @@ var playAgainBtnEl = document.querySelector('#play-again-btn');
 
 
 
-var spelerEenPokemon;     //Globaal gemaakt voor als ze nodig zijn.
-var spelerTweePokemon;
 
 var spelerEenBeurt = true;
 var spelerTweeBeurt = false;
 
-var totaal = 60;
-var totaal2 = 60;    //Of totaalCharmander, totaalSquirtle etc.
+var totaal;
+var totaal2;
+
+var schade1;
+var schade2;
+var schade3;
+var schade4;
+
+
 
 function gameBegin() {
 
@@ -136,20 +145,42 @@ function gameBegin() {
             }
             else
             {
+            
+        if (spelerEenPokemon == "Charmander"){
+          p.toonPokemon( charmander );
+        }
+        if (spelerEenPokemon == "Squirtle"){
+          p.toonPokemon( squirtle );
+        }
+        if (spelerEenPokemon == "Bulbasaur"){
+          p.toonPokemon( bulbasaur );
+        }
+
+        if (spelerTweePokemon == "Charmander"){
+          p.toonPokemon2( charmander );
+        }
+        if (spelerTweePokemon == "Squirtle"){
+          p.toonPokemon2( squirtle );
+        }
+        if (spelerTweePokemon == "Bulbasaur"){
+          p.toonPokemon2( bulbasaur );
+        }
 
         document.getElementById("battleContainer").classList.add('show');
         document.getElementById("header2").classList.add('hide');
         document.getElementById("header3").classList.add('hide');
-        document.getElementById("hpSpeler1").innerHTML = "HP: "+totaal;
-        document.getElementById("hpSpeler2").innerHTML = "HP: "+totaal2;
 
-        document.getElementById("spelerEenPokemonTekst").innerHTML = spelerEenPokemon;
-        document.getElementById("spelerTweePokemonTekst").innerHTML = spelerTweePokemon;
     }
 }
 
-    //Dit is de parameter voor aanvallen die in de aanval-buttons worden aangeroepen met een argument
-    function aanvallen(schade){
+
+
+var charmander = new Pokemon("Charmander", "vuur", 65, charmandermoves, "charmander1.png", "charmander2.png");
+var squirtle = new Pokemon("Squirtle", "water", 55, squirtlemoves, "squirtle1.png", "squirtle2.png");
+var bulbasaur = new Pokemon("Bulbasaur", "grass", 60, bulbasaurmoves, "bulbasaur1.png", "bulbasaur2.png");
+
+
+    function aanvallen(i){
       if (spelerEenBeurt)
       {
         if (totaal2 <= 0) {  
@@ -157,18 +188,30 @@ function gameBegin() {
            document.getElementById("aanvalbuttons2").classList.add('fade');
            document.getElementById("winnaartekst").innerHTML = "De winnaar is: Speler 1";
            document.getElementById("play-again").classList.add('show');
-           totaal2 = 0;
+           document.getElementById("hpSpeler2").innerHTML = "HP: 0";
            return;
         }else{
-           totaal2 = totaal2 - schade;
+           if (i == 0) {
+           totaal2 = totaal2 - schade1;
+           }
+           if (i == 1) {
+           totaal2 = totaal2 - schade2;
+           }
       }
       document.getElementById("hpSpeler2").innerHTML = "HP: "+totaal2;
       spelerEenBeurt = false;
       spelerTweeBeurt = true;
+      if (totaal2 <= 0){
+        document.getElementById("aanvalbuttons").classList.add('fade');
+        document.getElementById("hpSpeler2").innerHTML = "HP: 0";
+        document.getElementById("aanvalbuttons2").classList.add('fade');
+        document.getElementById("winnaartekst").innerHTML = "De winnaar is: Speler 1";
+        document.getElementById("play-again").classList.add('show');
+      }
       } 
     }
 
-     function aanvallen2(schade2){
+     function aanvallen2(i){
       if (spelerTweeBeurt)
       {
         if (totaal <= 0) {  
@@ -176,21 +219,32 @@ function gameBegin() {
            document.getElementById("aanvalbuttons2").classList.add('fade');
            document.getElementById("winnaartekst").innerHTML = "De winnaar is: Speler 2";
            document.getElementById("play-again").classList.add('show');
-           totaal = 0;
+           document.getElementById("hpSpeler1").innerHTML = "HP: 0";
            return;
         }else{
-           totaal = totaal - schade2;
+           if (i == 0) {
+           totaal = totaal - schade3;
+           }
+           if (i == 1) {
+           totaal = totaal - schade4;
+           }
       }
       document.getElementById("hpSpeler1").innerHTML = "HP: "+totaal;
       spelerEenBeurt = true;
       spelerTweeBeurt = false;
+      if (totaal <= 0) {  
+        document.getElementById("aanvalbuttons").classList.add('fade');
+        document.getElementById("aanvalbuttons2").classList.add('fade');
+        document.getElementById("winnaartekst").innerHTML = "De winnaar is: Speler 2";
+        document.getElementById("play-again").classList.add('show');
+        document.getElementById("hpSpeler1").innerHTML = "HP: 0";
+      }
       } 
     }
 
      function reloadpage(){
        location.reload();
      }
-
 
 
     </script>
@@ -200,14 +254,14 @@ function gameBegin() {
     <h2 id="header2" class="header2">
             <span id="speler1" contenteditable="false">Speler 1</span>
     <select id="spelerEenKeuze">
-            <option value="keuze"> -- kies een pokemon -- </option>
+            <option value="keuze" disabled selected> -- kies een pokemon -- </option>
             <option value="Charmander">Charmander</option>
             <option value="Squirtle">Squirtle</option>
             <option value="Bulbasaur">Bulbasaur</option>
     </select>
             <span id="speler2" contenteditable="false">Speler 2</span>
     <select id="spelerTweeKeuze">
-            <option value="keuze"> -- kies een pokemon -- </option>
+            <option value="keuze" disabled selected> -- kies een pokemon -- </option>
             <option value="Bulbasaur">Bulbasaur</option>
             <option value="Squirtle">Squirtle</option>
             <option value="Charmander">Charmander</option>
@@ -227,8 +281,8 @@ function gameBegin() {
         <div id="spelerEenPokemonTekst"></div>
         <div id="hpSpeler1"></div>
         <div id="aanvalbuttons" class="aanvalbuttons">
-        <button class="aanval" onclick="aanvallen(20)">Tackle (20)</button> <!-- Dit is het argument voor de parameter 'schade' -->
-        <button class="aanval" onclick="aanvallen(30)">Ember (30)</button>
+        <button class="aanval" id="aanval1" onclick="aanvallen(0)"></button>
+        <button class="aanval" id="aanval2" onclick="aanvallen(1)"></button>
         </div>
         <br>
         <img id="plaatje1" src="charmander1.png" width="220" height="200">
@@ -238,8 +292,8 @@ function gameBegin() {
         <div id="spelerTweePokemonTekst"></div>
         <div id="hpSpeler2"></div>
         <div id="aanvalbuttons2" class="aanvalbuttons2">
-        <button class="aanval" onclick="aanvallen2(20)">Scratch (20)</button>
-        <button class="aanval" onclick="aanvallen2(30)">Vine Whip (30)</button>
+        <button class="aanval" id="aanval3" onclick="aanvallen2(0)"></button>
+        <button class="aanval" id="aanval4" onclick="aanvallen2(1)"></button>
         </div>
         <br>
         <img id="plaatje2" src="bulbasaur2.png" width="220" height="200">
