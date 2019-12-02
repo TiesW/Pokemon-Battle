@@ -10,6 +10,11 @@
        margin: 90px;
        text-align: center;
     }
+
+    h1 {
+      font-size: 1.5em;
+    }
+
     #speler1, #speler2 {
         font-size: 1.20rem;
     }
@@ -41,11 +46,10 @@
     }
     .battleContainer.show {
     height: 600px;
-    width: 800px;
-    background-color: rgb(231, 231, 231);
+    width: 750px;
+    background-color: rgb(238, 237, 237);
     margin: 0 auto;
     position: relative;
-    border: 1px solid rgb(172, 172, 172);
     }
 
     #spelerEenPokemonTekst, #spelerTweePokemonTekst {
@@ -56,8 +60,32 @@
 
     #winnaartekst {
       display: inline-block;
-      font-size: 1.5rem;
+      font-size: 1rem;
       margin-bottom: 2em;
+    }
+
+    .effectivetekst {
+      display: inline-block;
+      font-size: 1rem;
+      margin-bottom: 2em;   
+    }
+
+    progress {
+      border-radius: 2px;
+      height: 12px;
+    }
+    progress::-webkit-progress-bar {
+      background-color: rgb(255, 255, 255);
+      border-radius: 2px;
+    }
+    progress::-webkit-progress-value {
+      border-radius: 2px; 
+      background: rgb(49, 155, 49);
+    }
+
+    .beurtstatus.fade {
+      height: 0px;
+      overflow: hidden;
     }
 
     .play-again {
@@ -77,13 +105,16 @@
     background: rgb(64, 76, 131);
     color: white;
     text-decoration: none;
+    border-radius: 3px;
     }
 
     .aanval {
-    background-color: rgb(226, 226, 226);
+    background-color: rgb(216, 216, 216);
     cursor: pointer;
     margin-top: 2em;
     height: 30px;
+    border-width: 0px;
+    border-radius: 3px;
     }
 
     .aanval:focus {
@@ -105,18 +136,13 @@
     }
 
     </style>
+    
     <script src="classes.js"></script>
     <script>
 
- 
 
 
 var playAgainBtnEl = document.querySelector('#play-again-btn');
-
-
-
-
-
 
 var spelerEenBeurt = true;
 var spelerTweeBeurt = false;
@@ -129,15 +155,43 @@ var schade2;
 var schade3;
 var schade4;
 
+var pokemonEenWeakness;
+var pokemonEenResistence;
+var pokemonEenResistenceTwee;
+var pokemonTweeWeakness;
+var pokemonTweeResistence;
+var pokemonTweeResistenceTwee;
 
+var moveOnePP;
+var moveTwoPP;
+var moveThreePP;
+var moveFourPP;
+
+var moveOneTotalPP;
+var moveTwoTotalPP;
+var moveThreeTotalPP;
+var moveFourTotalPP;
+
+window.onload = function () {
+        var geselecteerdePokemonEen = document.getElementById('spelerEenKeuze');
+        var geselecteerdePokemonTwee = document.getElementById('spelerTweeKeuze');
+        PokemonList.forEach(function(element) {
+          var option = document.createElement("option");
+          option.text = option.value = element.naam;
+          var option2 = document.createElement("option");
+          option2.text = option2.value = element.naam;
+          geselecteerdePokemonEen.add(option);
+          geselecteerdePokemonTwee.add(option2);
+        });
+        }
 
 function gameBegin() {
 
-            var geselecteerdePokemonEen = document.getElementById('spelerEenKeuze');
-            var spelerEenPokemon = geselecteerdePokemonEen.options[spelerEenKeuze.selectedIndex].value;
-            
-            var geselecteerdePokemonTwee = document.getElementById('spelerTweeKeuze');
-            var spelerTweePokemon = geselecteerdePokemonTwee.options[spelerTweeKeuze.selectedIndex].value;
+        var geselecteerdePokemonEen = document.getElementById('spelerEenKeuze');
+        var spelerEenPokemon = geselecteerdePokemonEen.options[spelerEenKeuze.selectedIndex].value;
+        
+        var geselecteerdePokemonTwee = document.getElementById('spelerTweeKeuze');
+        var spelerTweePokemon = geselecteerdePokemonTwee.options[spelerTweeKeuze.selectedIndex].value;
 
         if(spelerEenPokemon == "keuze" || spelerTweePokemon == "keuze")
             {
@@ -145,102 +199,170 @@ function gameBegin() {
             }
             else
             {
-            
-        if (spelerEenPokemon == "Charmander"){
-          p.toonPokemon( charmander );
-        }
-        if (spelerEenPokemon == "Squirtle"){
-          p.toonPokemon( squirtle );
-        }
-        if (spelerEenPokemon == "Bulbasaur"){
-          p.toonPokemon( bulbasaur );
-        }
 
-        if (spelerTweePokemon == "Charmander"){
-          p.toonPokemon2( charmander );
-        }
-        if (spelerTweePokemon == "Squirtle"){
-          p.toonPokemon2( squirtle );
-        }
-        if (spelerTweePokemon == "Bulbasaur"){
-          p.toonPokemon2( bulbasaur );
-        }
+        var pokemonEen = window[spelerEenPokemon.toLowerCase()];
+        var pokemonTwee = window[spelerTweePokemon.toLowerCase()];
+
+        p.toonPokemon( pokemonEen );
+        p.toonPokemon2( pokemonTwee );
 
         document.getElementById("battleContainer").classList.add('show');
         document.getElementById("header2").classList.add('hide');
         document.getElementById("header3").classList.add('hide');
 
+        document.getElementById("beurtstatus").innerHTML = "Aan de beurt: Speler 1";
+        document.getElementById("aanvalbuttons2").style.opacity = "0.5";
+        clickcount2 = 1;
+
     }
 }
 
-
-
-var charmander = new Pokemon("Charmander", "vuur", 65, charmandermoves, "charmander1.png", "charmander2.png");
-var squirtle = new Pokemon("Squirtle", "water", 55, squirtlemoves, "squirtle1.png", "squirtle2.png");
-var bulbasaur = new Pokemon("Bulbasaur", "grass", 60, bulbasaurmoves, "bulbasaur1.png", "bulbasaur2.png");
-
+var PokemonList = [
+charmander = new Pokemon("Charmander", 65, charmandermoves, "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0ca72937-3885-42a2-949b-094db4306a6a/dartvip-fb664aeb-09bc-4ac8-830c-16823e0c274b.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzBjYTcyOTM3LTM4ODUtNDJhMi05NDliLTA5NGRiNDMwNmE2YVwvZGFydHZpcC1mYjY2NGFlYi0wOWJjLTRhYzgtODMwYy0xNjgyM2UwYzI3NGIucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.49EsBJikYiS11Xho35u2ebmP6gLFmZZZKc327qxV57s", "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0ca72937-3885-42a2-949b-094db4306a6a/d9u589s-7d2a55ad-03a2-4e14-bc39-af80e3c38854.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzBjYTcyOTM3LTM4ODUtNDJhMi05NDliLTA5NGRiNDMwNmE2YVwvZDl1NTg5cy03ZDJhNTVhZC0wM2EyLTRlMTQtYmMzOS1hZjgwZTNjMzg4NTQucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.UAt2TD0QCP2-3Iwh4wzILMc7JudgnA2-vKe4R0_U8m0", "grass", "fire", "water"),
+squirtle = new Pokemon("Squirtle", 55, squirtlemoves, "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0ca72937-3885-42a2-949b-094db4306a6a/darva3s-b8b4f5dc-1093-4736-b0c9-d3328c974f85.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzBjYTcyOTM3LTM4ODUtNDJhMi05NDliLTA5NGRiNDMwNmE2YVwvZGFydmEzcy1iOGI0ZjVkYy0xMDkzLTQ3MzYtYjBjOS1kMzMyOGM5NzRmODUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.joEzvswSH-fCtJDuXkAjARTzFNgzWvk0hN_r5T0JJeM", "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0ca72937-3885-42a2-949b-094db4306a6a/dadrm3h-6e5d9701-d694-44b0-89fd-1fe10964b8c6.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzBjYTcyOTM3LTM4ODUtNDJhMi05NDliLTA5NGRiNDMwNmE2YVwvZGFkcm0zaC02ZTVkOTcwMS1kNjk0LTQ0YjAtODlmZC0xZmUxMDk2NGI4YzYucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.W1265jjBUurXt9c9yrld4LLJY6D6UnqKi-C2554Fc-k", "fire", "water", "grass"),
+bulbasaur = new Pokemon("Bulbasaur", 60, bulbasaurmoves, "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0ca72937-3885-42a2-949b-094db4306a6a/darrpmz-c6975c03-45d0-4a63-bc65-e385d93560ec.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzBjYTcyOTM3LTM4ODUtNDJhMi05NDliLTA5NGRiNDMwNmE2YVwvZGFycnBtei1jNjk3NWMwMy00NWQwLTRhNjMtYmM2NS1lMzg1ZDkzNTYwZWMucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.11829lpYSeKoDP8RWXrUCPfmDg53tL0et9xRx5gcMCY", "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0ca72937-3885-42a2-949b-094db4306a6a/d9u57gr-e43ea60a-ca91-487a-8c5d-43c47a1da7f5.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzBjYTcyOTM3LTM4ODUtNDJhMi05NDliLTA5NGRiNDMwNmE2YVwvZDl1NTdnci1lNDNlYTYwYS1jYTkxLTQ4N2EtOGM1ZC00M2M0N2ExZGE3ZjUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.-pKSZ41fcvGeckhRhR4jbnYeMwEFSfCNVm5XfluGC8Q", "water", "grass", "fire"),
+charizard = new Pokemon("Charizard", 150, charizardmoves, "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0ca72937-3885-42a2-949b-094db4306a6a/darum7k-230b5ab4-7fe6-4d5f-9835-24965dd1a856.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzBjYTcyOTM3LTM4ODUtNDJhMi05NDliLTA5NGRiNDMwNmE2YVwvZGFydW03ay0yMzBiNWFiNC03ZmU2LTRkNWYtOTgzNS0yNDk2NWRkMWE4NTYucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.jF66knzZM40Kmj342z6ma7IJLesIYBZxrfindIqr4Cc", "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0ca72937-3885-42a2-949b-094db4306a6a/dadps96-1d028e6f-6efa-49e3-afd3-5f9858a526f7.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzBjYTcyOTM3LTM4ODUtNDJhMi05NDliLTA5NGRiNDMwNmE2YVwvZGFkcHM5Ni0xZDAyOGU2Zi02ZWZhLTQ5ZTMtYWZkMy01Zjk4NThhNTI2ZjcucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.N-nibeoO5PoMf7n6dTISsfI0DkjVWq3cbGUCOYVRo2s", "grass", "fire", "water"),
+raikou = new Pokemon("Raikou", 180, raikoumoves, "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0ca72937-3885-42a2-949b-094db4306a6a/dbhafda-5408de40-b456-40b5-9e3b-3c1ee6fb28d4.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzBjYTcyOTM3LTM4ODUtNDJhMi05NDliLTA5NGRiNDMwNmE2YVwvZGJoYWZkYS01NDA4ZGU0MC1iNDU2LTQwYjUtOWUzYi0zYzFlZTZmYjI4ZDQucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.5I_logi5-EMjbAllKLru4ZmbEAiGMZ7QiLZrAFYA72U", "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0ca72937-3885-42a2-949b-094db4306a6a/dbhafc2-8bf80c93-40f1-4105-8638-1af3ad0502bf.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzBjYTcyOTM3LTM4ODUtNDJhMi05NDliLTA5NGRiNDMwNmE2YVwvZGJoYWZjMi04YmY4MGM5My00MGYxLTQxMDUtODYzOC0xYWYzYWQwNTAyYmYucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.Q7_ngaTc0thSeS8Y7w_nmg0SuHWztsWP0L2-LJrXmOk", "flying", "electric", "ground")
+];
 
     function aanvallen(i){
-      if (spelerEenBeurt)
-      {
-        if (totaal2 <= 0) {  
-           document.getElementById("aanvalbuttons").classList.add('fade');
-           document.getElementById("aanvalbuttons2").classList.add('fade');
-           document.getElementById("winnaartekst").innerHTML = "De winnaar is: Speler 1";
-           document.getElementById("play-again").classList.add('show');
-           document.getElementById("hpSpeler2").innerHTML = "HP: 0";
-           return;
-        }else{
-           if (i == 0) {
-           totaal2 = totaal2 - schade1;
-           }
-           if (i == 1) {
-           totaal2 = totaal2 - schade2;
-           }
+        if (spelerEenBeurt)
+        {
+            if (i == 0 && moveOnePP > 0) {
+            totaal2 -= schade1;
+            document.getElementById("health2").value -= schade1;
+            moveOnePP -= 1;
+            }
+            else if (i == 1 && moveTwoPP > 0) {
+            totaal2 -= schade2;
+            document.getElementById("health2").value -= schade2;
+            moveTwoPP -= 1;
+            } else {
+              return;
+            }  
+        }
+        document.getElementById("aanval1pp").innerHTML = "("+moveOnePP+"/"+moveOneTotalPP+")";
+        document.getElementById("aanval2pp").innerHTML = "("+moveTwoPP+"/"+moveTwoTotalPP+")";
+        document.getElementById("hpSpeler2").innerHTML = "HP: "+totaal2;
+        document.getElementById("health2").value = totaal2;
+        spelerEenBeurt = false;
+        spelerTweeBeurt = true;
+        document.getElementById("beurtstatus").innerHTML = "Aan de beurt: Speler 2";
+        document.getElementById("aanvalbuttons2").style.opacity = "1";
+        document.getElementById("aanval1").style.opacity = "1"; // So that there isn't a double gray-out when the PP is 0.
+        document.getElementById("aanval2").style.opacity = "1";
+        document.getElementById("aanvalbuttons").style.opacity = "0.5";
+        clickcount2 = 0;
+        if (moveThreePP <= 0){
+          document.getElementById("aanval3").style.opacity = "0.5";
+        }
+        if (moveFourPP <= 0){
+          document.getElementById("aanval4").style.opacity = "0.5";
+        }
+        if (totaal2 <= 0){
+          document.getElementById("aanvalbuttons").classList.add('fade');
+          document.getElementById("hpSpeler2").innerHTML = "HP: 0";
+          document.getElementById("beurtstatus").classList.add('fade');
+          document.getElementById("aanvalbuttons2").classList.add('fade');
+          document.getElementById("winnaartekst").innerHTML = "De winnaar is: Speler 1";
+          document.getElementById("play-again").classList.add('show');
+        }
       }
-      document.getElementById("hpSpeler2").innerHTML = "HP: "+totaal2;
-      spelerEenBeurt = false;
-      spelerTweeBeurt = true;
-      if (totaal2 <= 0){
-        document.getElementById("aanvalbuttons").classList.add('fade');
-        document.getElementById("hpSpeler2").innerHTML = "HP: 0";
-        document.getElementById("aanvalbuttons2").classList.add('fade');
-        document.getElementById("winnaartekst").innerHTML = "De winnaar is: Speler 1";
-        document.getElementById("play-again").classList.add('show');
-      }
-      } 
-    }
 
      function aanvallen2(i){
-      if (spelerTweeBeurt)
-      {
+        if (spelerTweeBeurt)
+        {
+            if (i == 0 && moveThreePP > 0) {
+            totaal -= schade3;
+            document.getElementById("health").value -= schade3;
+            moveThreePP -= 1;
+            }
+            else if (i == 1 && moveFourPP > 0) {
+            totaal -= schade4;
+            document.getElementById("health").value -= schade4;
+            moveFourPP -= 1;
+            } else {
+              return;
+            }  
+        }
+        document.getElementById("aanval3pp").innerHTML = "("+moveThreePP+"/"+moveThreeTotalPP+")";
+        document.getElementById("aanval4pp").innerHTML = "("+moveFourPP+"/"+moveFourTotalPP+")";
+        document.getElementById("hpSpeler1").innerHTML = "HP: "+totaal;
+        spelerEenBeurt = true;
+        spelerTweeBeurt = false;
+        document.getElementById("beurtstatus").innerHTML = "Aan de beurt: Speler 1";
+        document.getElementById("aanvalbuttons").style.opacity = "1";
+        document.getElementById("aanval3").style.opacity = "1";
+        document.getElementById("aanval4").style.opacity = "1";
+        document.getElementById("aanvalbuttons2").style.opacity = "0.5";
+        document.getElementById("health").value = totaal;
+        clickcount = 0;
+        if (moveOnePP <= 0){
+          document.getElementById("aanval1").style.opacity = "0.5";
+        }
+        if (moveTwoPP <= 0){
+          document.getElementById("aanval2").style.opacity = "0.5";
+        }
         if (totaal <= 0) {  
-           document.getElementById("aanvalbuttons").classList.add('fade');
-           document.getElementById("aanvalbuttons2").classList.add('fade');
-           document.getElementById("winnaartekst").innerHTML = "De winnaar is: Speler 2";
-           document.getElementById("play-again").classList.add('show');
-           document.getElementById("hpSpeler1").innerHTML = "HP: 0";
-           return;
-        }else{
-           if (i == 0) {
-           totaal = totaal - schade3;
-           }
-           if (i == 1) {
-           totaal = totaal - schade4;
-           }
-      }
-      document.getElementById("hpSpeler1").innerHTML = "HP: "+totaal;
-      spelerEenBeurt = true;
-      spelerTweeBeurt = false;
-      if (totaal <= 0) {  
-        document.getElementById("aanvalbuttons").classList.add('fade');
-        document.getElementById("aanvalbuttons2").classList.add('fade');
-        document.getElementById("winnaartekst").innerHTML = "De winnaar is: Speler 2";
-        document.getElementById("play-again").classList.add('show');
-        document.getElementById("hpSpeler1").innerHTML = "HP: 0";
-      }
+          document.getElementById("aanvalbuttons").classList.add('fade');
+          document.getElementById("aanvalbuttons2").classList.add('fade');
+          document.getElementById("beurtstatus").classList.add('fade');
+          document.getElementById("winnaartekst").innerHTML = "De winnaar is: Speler 2";
+          document.getElementById("play-again").classList.add('show');
+          document.getElementById("hpSpeler1").innerHTML = "HP: 0";
+        }
       } 
-    }
+     
+     var clickcount = 0;
+     var clickcount2 = 0;
+
+     function addCount(){
+       clickcount++;
+     }
+
+     function addCount2(){
+       clickcount2++;
+     }
+
+     function superEffectiefMsg(){
+       if (clickcount == 0 && moveOnePP > 0 && moveTwoPP > 0){
+        document.getElementById("effectivetekst").style.opacity = "1";
+        document.getElementById("effectivetekst").innerHTML = "Super effectief!";
+        setTimeout(removeText, 1000);
+       }
+       clickcount++;
+     }
+
+     function nietEffectiefMsg(){
+       if (clickcount == 0 && moveOnePP > 0 && moveTwoPP > 0){
+        document.getElementById("effectivetekst").style.opacity = "1";
+        document.getElementById("effectivetekst").innerHTML = "Niet effectief.";
+        setTimeout(removeText, 1000);
+       }
+       clickcount++;
+     }
+
+     function superEffectiefMsg2(){
+       if (clickcount2 == 0 && moveThreePP > 0 && moveFourPP > 0){
+        document.getElementById("effectivetekst").style.opacity = "1";
+        document.getElementById("effectivetekst").innerHTML = "Super effectief!";
+        setTimeout(removeText, 1000);
+       }
+       clickcount2++;
+     }
+
+     function nietEffectiefMsg2(){
+       if (clickcount2 == 0 && moveThreePP > 0 && moveFourPP > 0){
+        document.getElementById("effectivetekst").style.opacity = "1";
+        document.getElementById("effectivetekst").innerHTML = "Niet effectief.";
+        setTimeout(removeText, 1000);
+       }
+       clickcount2++;
+     }
+
+     function removeText(){
+        document.getElementById("effectivetekst").style.opacity = "0";
+     }
 
      function reloadpage(){
        location.reload();
@@ -248,6 +370,7 @@ var bulbasaur = new Pokemon("Bulbasaur", "grass", 60, bulbasaurmoves, "bulbasaur
 
 
     </script>
+
   </head>
   <body>
     <h1 class="title">Pokémon Battle</h1>
@@ -255,48 +378,57 @@ var bulbasaur = new Pokemon("Bulbasaur", "grass", 60, bulbasaurmoves, "bulbasaur
             <span id="speler1" contenteditable="false">Speler 1</span>
     <select id="spelerEenKeuze">
             <option value="keuze" disabled selected> -- kies een pokemon -- </option>
-            <option value="Charmander">Charmander</option>
-            <option value="Squirtle">Squirtle</option>
-            <option value="Bulbasaur">Bulbasaur</option>
     </select>
             <span id="speler2" contenteditable="false">Speler 2</span>
     <select id="spelerTweeKeuze">
             <option value="keuze" disabled selected> -- kies een pokemon -- </option>
-            <option value="Bulbasaur">Bulbasaur</option>
-            <option value="Squirtle">Squirtle</option>
-            <option value="Charmander">Charmander</option>
     </select>
     </h2>
     <h3 id="header3" class="header3">
     <button id="beginButton" onclick="gameBegin()">Start Spel</button>
     </h3>
+    <div id="beurtstatus" class="beurtstatus">
+    </div>
     <span id="winnaartekst"></span>
+    <br>
+    <div id="effectivetekst" class="effectivetekst"></div>
 
 
 
     <div id="battleContainer" class="battleContainer">
 
         <div class="pokeBoxEen">
-        <span id="speler1box">Speler 1</span>
-        <div id="spelerEenPokemonTekst"></div>
-        <div id="hpSpeler1"></div>
-        <div id="aanvalbuttons" class="aanvalbuttons">
-        <button class="aanval" id="aanval1" onclick="aanvallen(0)"></button>
-        <button class="aanval" id="aanval2" onclick="aanvallen(1)"></button>
+          <span id="speler1box">Speler 1</span>
+          <div id="spelerEenPokemonTekst"></div>
+          <div id="hpSpeler1"></div>
+          <progress id="health"></progress>
+          <div id="aanvalbuttons" class="aanvalbuttons">
+            <button class="aanval" id="aanval1" onclick="aanvallen(0)"></button>
+            <button class="aanval" id="aanval2" onclick="aanvallen(1)"></button>
+          </div>
+          <div>
+            <span id="aanval1pp" style="font-size: 0.8rem;"></span>
+            <span id="aanval2pp" style="font-size: 0.8rem;"></span>
+          </div>
+          <br>
+          <img id="plaatje1" src="" width="auto" height="auto">
         </div>
-        <br>
-        <img id="plaatje1" src="charmander1.png" width="220" height="200">
-        </div>
+
         <div class="pokeBoxTwee">
-        <div id="speler2box">Speler 2</div>
-        <div id="spelerTweePokemonTekst"></div>
-        <div id="hpSpeler2"></div>
-        <div id="aanvalbuttons2" class="aanvalbuttons2">
-        <button class="aanval" id="aanval3" onclick="aanvallen2(0)"></button>
-        <button class="aanval" id="aanval4" onclick="aanvallen2(1)"></button>
-        </div>
-        <br>
-        <img id="plaatje2" src="bulbasaur2.png" width="220" height="200">
+          <div id="speler2box">Speler 2</div>
+          <div id="spelerTweePokemonTekst"></div>
+          <div id="hpSpeler2"></div>
+          <progress id="health2"></progress>
+          <div id="aanvalbuttons2" class="aanvalbuttons2">
+            <button class="aanval" id="aanval3" onclick="aanvallen2(0)"></button>
+            <button class="aanval" id="aanval4" onclick="aanvallen2(1)"></button>
+          </div>
+          <div>
+            <span id="aanval3pp" style="font-size: 0.8rem;"></span>
+            <span id="aanval4pp" style="font-size: 0.8rem;"></span>
+          </div>
+          <br>
+          <img id="plaatje2" src="" width="auto" height="auto">
         </div>
         <br>
 
@@ -305,8 +437,6 @@ var bulbasaur = new Pokemon("Bulbasaur", "grass", 60, bulbasaurmoves, "bulbasaur
         </div>
 
     </div>
-
-
 
 
   </body>
